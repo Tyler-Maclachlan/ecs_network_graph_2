@@ -1,0 +1,8 @@
+{
+  "name": "ecs_network_graph",
+  "version": "1.0.0",
+  "description": "Network graph visualisation library",
+  "main": "index.js",
+  "author": "Tyler Maclachlan",
+  "license": "MIT"
+}
