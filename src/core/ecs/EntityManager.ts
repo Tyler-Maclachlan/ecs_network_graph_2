@@ -76,7 +76,7 @@ export default class EntityManager {
                 if (store.has(entity)) {
                     store.delete(entity);
                 }
-            })
+            });
         }
     }
 
@@ -90,7 +90,7 @@ export default class EntityManager {
         return store.indices;
     }
 
-    public getEntitiesWithComponents(components: Newable<BaseComponent>[]) {
+    public getEntitiesWithComponents(components: [Newable<BaseComponent>]): Array<Entity> {
         const componentNames = components.map(c => c.name);
         let entities = this._entities;
 
