@@ -1,6 +1,6 @@
-import BaseComponent from "./BaseComponent";
-import Entity from "../ecs/Entity";
+import { BaseComponent } from "./";
+import { Entity } from "../ecs/";
 
-export default class ClusterComponent extends BaseComponent {
+export class ClusterComponent extends BaseComponent {
     public inCluster: Entity[];
 }

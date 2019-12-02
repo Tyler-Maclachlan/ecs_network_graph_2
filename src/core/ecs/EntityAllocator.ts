@@ -1,11 +1,11 @@
-import Entity from "./Entity";
+import { Entity } from "./";
 
 interface AllocEntry {
     generation: number;
     is_alive: boolean;
 }
 
-export default class EntityAllocator {
+export class EntityAllocator {
     private _entries: Array<AllocEntry>;
     private _free: Array<number>;
 

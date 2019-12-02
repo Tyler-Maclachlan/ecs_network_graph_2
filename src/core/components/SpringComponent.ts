@@ -1,7 +1,7 @@
-import BaseComponent from "./BaseComponent";
-import Entity from "../ecs/Entity";
+import { BaseComponent } from "./";
+import { Entity } from "../ecs/";
 
-export default class SpringComponent extends BaseComponent {
-    from: Entity;
-    to: Entity;
+export class SpringComponent extends BaseComponent {
+    public from: Entity;
+    public to: Entity;
 }

@@ -1,6 +1,6 @@
-import BaseComponent from "./BaseComponent";
+import { BaseComponent } from "./";
 
-export default class LabelComponent extends BaseComponent {
+export class LabelComponent extends BaseComponent {
     public text: string;
     public vAlign: VAlign;
     public hAlign: HAlign;

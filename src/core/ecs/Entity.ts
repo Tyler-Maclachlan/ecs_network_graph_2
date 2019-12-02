@@ -1,4 +1,4 @@
-export default class Entity {
+export class Entity {
     private _index: number;
     private _generation: number;
 

@@ -15,3 +15,13 @@ interface ArrayElement<T> {
     value: T;
     generation: number;
 }
+
+interface System {
+    active: boolean;
+    update(dt?: number): void;
+}
+
+interface Time {
+    startTime: Date;
+    endTime: Date;
+}

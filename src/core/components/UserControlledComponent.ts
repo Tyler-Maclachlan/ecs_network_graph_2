@@ -1,5 +1,5 @@
-import BaseComponent from "./BaseComponent";
+import { BaseComponent } from "./";
 
-export default class UserControlledComponent extends BaseComponent {
+export class UserControlledComponent extends BaseComponent {
     public isControlled: boolean;
 }

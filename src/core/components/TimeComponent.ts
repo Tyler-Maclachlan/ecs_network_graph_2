@@ -1,6 +1,5 @@
-import BaseComponent from "./BaseComponent";
+import { BaseComponent } from "./";
 
-export default class TimeComponent extends BaseComponent {
-    startTime: Date;
-    endTime: Date;
+export class TimeComponent extends BaseComponent {
+    public activeTimes: Time[];
 }

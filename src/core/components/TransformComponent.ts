@@ -1,7 +1,7 @@
-import BaseComponent from "./BaseComponent";
+import { BaseComponent } from "./";
 import { Vec3 } from "../utils";
 
-export default class TransformComponent extends BaseComponent {
+export class TransformComponent extends BaseComponent {
     public scale: Vec3;
     public rotation: Vec3;
     public position: Vec3;

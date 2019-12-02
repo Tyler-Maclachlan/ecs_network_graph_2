@@ -1,6 +1,6 @@
-import Entity from "./Entity";
+import { Entity } from "./";
 
-export default class EntityMap<T> implements IterableIterator<T> {
+export class EntityMap<T> implements IterableIterator<T> {
     private _indices: Array<Entity>;
     private _elements: Array<Option<ArrayElement<T>>>;
     private _iter: number;

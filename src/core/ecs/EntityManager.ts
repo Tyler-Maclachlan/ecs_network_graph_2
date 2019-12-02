@@ -1,9 +1,7 @@
-import Entity from './Entity';
-import EntityAllocator from './EntityAllocator';
-import EntityMap from './EntityMap';
-import BaseComponent from '../components/BaseComponent';
+import { Entity, EntityAllocator, EntityMap } from './';
+import { BaseComponent } from '../components/';
 
-export default class EntityManager {
+export class EntityManager {
     private _allocator: EntityAllocator;
     private _entities: Entity[];
     private _componentStores: Map<string, EntityMap<BaseComponent>>;
@@ -16,6 +14,12 @@ export default class EntityManager {
 
     public get entities(): Entity[] {
         return this._entities;
+    }
+
+    public createEntity(): Entity {
+        const entity = this._allocator.allocate();
+        this._entities.push(entity);
+        return entity;
     }
 
     public addComponent<T extends BaseComponent>(entity: Entity, component: T) {
@@ -90,18 +94,26 @@ export default class EntityManager {
         return store.indices;
     }
 
-    public getEntitiesWithComponents(components: [Newable<BaseComponent>]): Array<Entity> {
+    public getEntitiesWithComponents(components: Newable<BaseComponent>[]): Array<Entity> {
         const componentNames = components.map(c => c.name);
-        let entities = this._entities;
+        const cLen = componentNames.length;
+        let entities: Array<Entity> = [];
 
-        for (const componentName in componentNames) {
-            const store = this._componentStores.get(componentName);
+        let cFound;
+        for (const e of this._entities) {
+            cFound = 0;
 
-            if (store === undefined) {
-                throw new Error(`No entities have been assigned component: ${componentName}`);
+            for (const c of componentNames) {
+                const store = this._componentStores.get(c);
+
+                if (store === undefined || !store.has(e)) {
+                    break;
+                } else if (store.has(e)) {
+                    cFound++;
+                }
             }
 
-            entities = entities.filter(entity => store.has(entity));
+            if (cFound === cLen) entities.push(e);
         }
 
         return entities;
