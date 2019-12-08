@@ -1,3 +1,5 @@
+import { Vec3 } from "./";
+
 export interface IOrthographicMatrix4Options {
     left: number;
     right: number;
@@ -46,7 +48,22 @@ export class Matrix4 {
         return m;
     }
 
-    public static translation(position: Vec3): Matrix4 {
+    public static perspective(fovy: number, aspect: number, near: number, far: number): Matrix4 {
+        const f = 1.0 / Math.tan(fovy / 2);
+        const nf = 1 / (near - far);
+
+        const m = new Matrix4();
+
+        m._data[0] = f / aspect;
+        m._data[5] = f;
+        m._data[10] = (far + near) * nf;
+        m._data[11] = -1;
+        m._data[14] = (2 * far * near) * nf;
+
+        return m;
+    }
+
+    public static translate(position: Vec3): Matrix4 {
         const m = new Matrix4();
 
         m._data[12] = position.x;
@@ -56,7 +73,7 @@ export class Matrix4 {
         return m;
     }
 
-    public static rotationX(angleInRadians: number): Matrix4 {
+    public static rotateX(angleInRadians: number): Matrix4 {
         const m = new Matrix4();
 
         const c = Math.cos(angleInRadians);
@@ -70,7 +87,7 @@ export class Matrix4 {
         return m;
     }
 
-    public static rotationY(angleInRadians: number): Matrix4 {
+    public static rotateY(angleInRadians: number): Matrix4 {
         const m = new Matrix4();
 
         const c = Math.cos(angleInRadians);
@@ -84,7 +101,7 @@ export class Matrix4 {
         return m;
     }
 
-    public static rotationZ(angleInRadians: number): Matrix4 {
+    public static rotateZ(angleInRadians: number): Matrix4 {
         const m = new Matrix4();
 
         const c = Math.cos(angleInRadians);
@@ -98,10 +115,10 @@ export class Matrix4 {
         return m;
     }
 
-    public static rotationXYZ(xRadians: number, yRadians: number, zRadians: number): Matrix4 {
-        const rx = Matrix4.rotationX(xRadians);
-        const ry = Matrix4.rotationY(yRadians);
-        const rz = Matrix4.rotationZ(zRadians);
+    public static rotateXYZ(xRadians: number, yRadians: number, zRadians: number): Matrix4 {
+        const rx = Matrix4.rotateX(xRadians);
+        const ry = Matrix4.rotateY(yRadians);
+        const rz = Matrix4.rotateZ(zRadians);
 
         return Matrix4.multiply(Matrix4.multiply(rz, ry), rx);
     }
@@ -180,165 +197,5 @@ export class Matrix4 {
         for (let i = 0; i < 16; i++) {
             this._data[i] = m._data[i];
         }
-    }
-}
-
-export class Vec3 {
-
-    private _x: number;
-    private _y: number;
-    private _z: number;
-
-    public constructor(x: number = 0, y: number = 0, z: number = 0) {
-        this._x = x;
-        this._y = y;
-        this._z = z;
-    }
-
-    public get x(): number {
-        return this._x;
-    }
-
-    public set x(value: number) {
-        this._x = value;
-    }
-
-    public get y(): number {
-        return this._y;
-    }
-
-    public set y(value: number) {
-        this._y = value;
-    }
-
-    public get z(): number {
-        return this._z;
-    }
-
-    public set z(value: number) {
-        this._z = value;
-    }
-
-    public static get zero(): Vec3 {
-        return new Vec3();
-    }
-
-    public static get one(): Vec3 {
-        return new Vec3(1, 1, 1);
-    }
-
-    public toArray(): number[] {
-        return [this._x, this._y, this._z];
-    }
-
-    public toFloat32Array(): Float32Array {
-        return new Float32Array(this.toArray());
-    }
-
-    public copyFrom(vector: Vec3): void {
-        this._x = vector._x;
-        this._y = vector._y;
-        this._z = vector._z;
-    }
-
-    public setFromJson(json: any): void {
-        if (json.x !== undefined) {
-            this._x = Number(json.x);
-        }
-        if (json.y !== undefined) {
-            this._y = Number(json.y);
-        }
-        if (json.z !== undefined) {
-            this._z = Number(json.z);
-        }
-    }
-
-    public add(v: Vec3): Vec3 {
-        this._x += v._x;
-        this._y += v._y;
-        this._z += v._z;
-
-        return this;
-    }
-
-    public subtract(v: Vec3): Vec3 {
-        this._x -= v._x;
-        this._y -= v._y;
-        this._z -= v._z;
-
-        return this;
-    }
-
-    public multiply(v: Vec3): Vec3 {
-        this._x *= v._x;
-        this._y *= v._y;
-        this._z *= v._z;
-
-        return this;
-    }
-
-    public divide(v: Vec3): Vec3 {
-        this._x /= v._x;
-        this._y /= v._y;
-        this._z /= v._z;
-
-        return this;
-    }
-}
-
-export class Vec2 {
-
-    private _x: number;
-    private _y: number;
-
-    public constructor(x: number = 0, y: number = 0) {
-        this._x = x;
-        this._y = y;
-    }
-
-    public get x(): number {
-        return this._x;
-    }
-
-    public set x(value: number) {
-        this._x = value;
-    }
-
-    public get y(): number {
-        return this._y;
-    }
-
-    public set y(value: number) {
-        this._y = value;
-    }
-
-    public toArray(): number[] {
-        return [this._x, this._y];
-    }
-
-    public toFloat32Array(): Float32Array {
-        return new Float32Array(this.toArray());
-    }
-
-    public static get zero(): Vec2 {
-        return new Vec2();
-    }
-
-    public static get one(): Vec2 {
-        return new Vec2(1, 1);
-    }
-
-    public setFromJson(json: any): void {
-        if (json.x !== undefined) {
-            this._x = Number(json.x);
-        }
-        if (json.y !== undefined) {
-            this._y = Number(json.y);
-        }
-    }
-
-    public copyFrom(v: Vec2): void {
-        this._x = v._x;
-        this._y = v._y;
     }
 }

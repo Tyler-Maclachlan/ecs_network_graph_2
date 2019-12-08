@@ -1,30 +1,116 @@
-export function hexToRgbArray(hex: string) {
-    const rgbArray: number[] = [];
-    hex = hex.replace('#', '');
+export class Color {
 
-    if (hex.length !== 6) {
-        throw new Error(`Invalid RGB hex string found ${hex}`);
+    private _r: number;
+    private _g: number;
+    private _b: number;
+    private _a: number;
+
+
+    public constructor(r: number = 255, g: number = 255, b: number = 255, a: number = 255) {
+        this._r = r;
+        this._g = g;
+        this._b = b;
+        this._a = a;
     }
 
-    rgbArray[0] = parseInt(hex.slice(0, 2), 16) / 255.0;
-    rgbArray[1] = parseInt(hex.slice(2, 4), 16) / 255.0;
-    rgbArray[2] = parseInt(hex.slice(4, 6), 16) / 255.0;
+    public static fromHex(hex: string) {
+        hex = hex.replace('#', '');
+        let rgba: number[] = [];
 
-    return rgbArray;
-}
+        if (hex.length === 6 || hex.length === 8) {
+            rgba[0] = parseInt(hex.slice(0, 2)) / 255.0;
+            rgba[1] = parseInt(hex.slice(2, 4)) / 255.0;
+            rgba[2] = parseInt(hex.slice(4, 6)) / 255.0;
 
-export function hexToRgbaArray(hex: string) {
-    const rgbaArray: number[] = [];
-    hex = hex.replace('#', '');
+            if (hex.length === 8) {
+                rgba[3] = parseInt(hex.slice(6, 8)) / 255.0;
+            } else {
+                rgba[3] = 1.0;
+            }
 
-    if (hex.length !== 8) {
-        throw new Error(`Invalid RGBA hex string found: ${hex}`);
+            return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+        } else {
+            throw new Error(`Invalid hex string for rgb(a) found: ${hex}`);
+        }
     }
 
-    rgbaArray[0] = parseInt(hex.slice(0, 2)) / 255.0;
-    rgbaArray[1] = parseInt(hex.slice(2, 4)) / 255.0;
-    rgbaArray[2] = parseInt(hex.slice(4, 6)) / 255.0;
-    rgbaArray[3] = parseInt(hex.slice(6, 8)) / 255.0;
+    public get r(): number {
+        return this._r;
+    }
 
-    return rgbaArray;
+    public set r(value: number) {
+        this._r = value;
+    }
+
+    public get rFloat(): number {
+        return this._r / 255.0
+    }
+
+    public get g(): number {
+        return this._g;
+    }
+
+    public set g(value: number) {
+        this._g = value;
+    }
+
+    public get gFloat(): number {
+        return this._g / 255.0
+    }
+
+    public get b(): number {
+        return this._b;
+    }
+
+    public set b(value: number) {
+        this._b = value;
+    }
+
+    public get bFloat(): number {
+        return this._b / 255.0
+    }
+
+    public get a(): number {
+        return this._a;
+    }
+
+    public set a(value: number) {
+        this._a = value;
+    }
+
+    public get aFloat(): number {
+        return this._a / 255.0
+    }
+
+    public toArray(): number[] {
+        return [this._r, this._g, this._b, this._a];
+    }
+
+    public toFloatArray(): number[] {
+        return [this._r / 255.0, this._g / 255.0, this._b / 255.0, this._a / 255.0];
+    }
+
+    public toFloat32Array(): Float32Array {
+        return new Float32Array(this.toFloatArray());
+    }
+
+    public static white(): Color {
+        return new Color(255, 255, 255, 255);
+    }
+
+    public static black(): Color {
+        return new Color(0, 0, 0, 255);
+    }
+
+    public static red(): Color {
+        return new Color(255, 0, 0, 255);
+    }
+
+    public static green(): Color {
+        return new Color(0, 255, 0, 255);
+    }
+
+    public static blue(): Color {
+        return new Color(0, 0, 255, 255);
+    }
 }

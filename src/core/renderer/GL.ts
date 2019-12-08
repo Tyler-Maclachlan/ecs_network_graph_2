@@ -1,4 +1,12 @@
-import { hexToRgbaArray, hexToRgbArray } from "../utils";
+import { Color, shaderFromDomSrc } from "../utils";
+import { Shader } from "./Shader";
+
+const ATTR_POSITION_NAME = "a_position";
+const ATTR_POSITION_LOC = 0;
+const ATTR_NORMAL_NAME = "a_norm";
+const ATTR_NORMAL_LOC = 1;
+const ATTR_UV_NAME = "a_uv";
+const ATTR_UV_LOC = 2;
 
 enum ShaderType {
     VERTEX_SHADER = WebGL2RenderingContext.VERTEX_SHADER,
@@ -9,6 +17,7 @@ export class GLContext {
     private _container: HTMLElement;
     private _canvas: HTMLCanvasElement;
     private _glContext: WebGL2RenderingContext;
+    private _shaderPrograms: Map<string, Shader> = new Map();
 
     public constructor(container: string | HTMLElement) {
         if (typeof container === 'string') {
@@ -31,14 +40,14 @@ export class GLContext {
             throw new Error('WebGL2 not supported in this browser');
         }
 
-        const c = this._glContext;
+        const gl = this._glContext;
 
-        c.cullFace(c.BACK);
-        c.frontFace(c.CCW);
-        c.enable(c.DEPTH_TEST);
-        c.enable(c.CULL_FACE);
-        c.depthFunc(c.LEQUAL);
-        c.blendFunc(c.SRC_ALPHA, c.ONE_MINUS_SRC_ALPHA);
+        gl.cullFace(gl.BACK);
+        gl.frontFace(gl.CCW);
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.CULL_FACE);
+        gl.depthFunc(gl.LEQUAL);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     }
 
@@ -68,79 +77,88 @@ export class GLContext {
     }
 
     public setClearColor(hex: string) {
-        if (hex.length > 7) {
-            const a = hexToRgbaArray(hex);
-            this._glContext.clearColor(a[0], a[1], a[2], a[3]);
-        } else {
-            const a = hexToRgbArray(hex);
-            this._glContext.clearColor(a[0], a[1], a[2], 1.0);
-        }
+        const c = Color.fromHex(hex);
+        this._glContext.clearColor(c.r, c.g, c.b, c.a);
     }
 
     public fClear() {
         this._glContext.clear(this._glContext.COLOR_BUFFER_BIT | this._glContext.DEPTH_BUFFER_BIT);
     }
 
-    public createShader(vShaderTxt: string, fShaderTxt: string, doValidate = true, transFeedbackVars: any = null, transFeedbackInterleaved = true) {
-        const vShader = this.compileShader(vShaderTxt, ShaderType.VERTEX_SHADER);
-        if (!vShader) return null;
-
-        const fShader = this.compileShader(fShaderTxt, ShaderType.FRAGMENT_SHADER);
-        if (!fShader) return null;
-
-        return this.createShaderProgram(vShader, fShader, doValidate, transFeedbackVars, transFeedbackInterleaved);
+    public createShader(name: string, vShaderTxt: string, fShaderTxt: string, doValidate = true, transFeedbackVars: any = null, transFeedbackInterleaved = true) {
+        const shader = new Shader(name);
+        shader.load(this._glContext, vShaderTxt, fShaderTxt, doValidate, transFeedbackVars, transFeedbackInterleaved)
+        this._shaderPrograms.set(name, shader);
+        return this._shaderPrograms.get(name);
     }
 
-    private compileShader(src: string, type: ShaderType) {
-        const gl = this._glContext;
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, src);
-        gl.compileShader(shader);
-
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error(`Error compiling shader: ${src}`, gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
-        }
-
-        return shader;
+    public useShader(name: string) {
+        this._shaderPrograms.get(name).use(this._glContext);
     }
 
-    private createShaderProgram(vShader: WebGLShader, fShader: WebGLShader, doValidate = true, transFeedbackVars: any = null, transFeedbackInterleaved = true) {
+    // public createArrayBuffer(floatArr: number[], isStatic = true) {
+    //     const gl = this._glContext;
+
+    //     const buf = gl.createBuffer();
+    //     gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    //     gl.bufferData(gl.ARRAY_BUFFER, floatArr, isStatic ? gl.STATIC_DRAW : gl.DYNAMIC_DRAW)
+    // }
+
+    public createMeshVAO(name: string, arrInd: number[], arrVerts: number[], arrNorm: number[], arrUV: number[]) {
         const gl = this._glContext;
-        const program = gl.createProgram();
-
-        gl.attachShader(program, vShader);
-        gl.attachShader(program, fShader);
-
-        if (transFeedbackVars !== null) {
-            gl.transformFeedbackVaryings(program, transFeedbackVars,
-                ((transFeedbackInterleaved) ? gl.INTERLEAVED_ATTRIBS : gl.SEPARATE_ATTRIBS));
+        const rtn: { [key: string]: any } = {
+            drawMode: gl.TRIANGLES,
+            vao: gl.createVertexArray(),
+            bufVertices: null,
+            bufNormals: null,
+            bufUV: null,
+            bufIndex: null,
+            vertexComponentLen: 3,
+            vertexCount: 0,
+            indexCount: 0
         }
 
-        gl.linkProgram(program);
+        gl.bindVertexArray(rtn.vao);
 
-        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-            console.error(`Error creating shader program`, gl.getProgramInfoLog(program));
-            gl.deleteProgram(program);
-            return null;
+        if (arrVerts !== undefined && arrVerts !== null) {
+            rtn.bufVertices = gl.createBuffer();
+            rtn.vertexCount = arrVerts.length / rtn.vertexComponentLen;
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, rtn.bufVertices);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arrVerts), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(ATTR_POSITION_LOC);
+            gl.vertexAttribPointer(ATTR_POSITION_LOC, 3, gl.FLOAT, false, 0, 0);
         }
 
-        if (doValidate) {
-            gl.validateProgram(program);
+        if (arrNorm !== undefined && arrNorm !== null) {
+            rtn.bufNormals = gl.createBuffer();
 
-            if (!gl.getProgramParameter(program, gl.VALIDATE_STATUS)) {
-                console.error('Error validating program', gl.getProgramInfoLog(program));
-                gl.deleteProgram(program);
-                return null;
-            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, rtn.bufNormals);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arrNorm), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(ATTR_NORMAL_LOC);
+            gl.vertexAttribPointer(ATTR_NORMAL_LOC, 3, gl.FLOAT, false, 0, 0);
         }
 
-        gl.detachShader(program, vShader);
-        gl.detachShader(program, fShader);
-        gl.deleteShader(fShader);
-        gl.deleteShader(vShader);
+        if (arrUV !== undefined && arrUV !== null) {
+            rtn.bufUV = gl.createBuffer();
 
-        return program;
+            gl.bindBuffer(gl.ARRAY_BUFFER, rtn.bufUV);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(arrUV), gl.STATIC_DRAW);
+            gl.enableVertexAttribArray(ATTR_UV_LOC);
+            gl.vertexAttribPointer(ATTR_UV_LOC, 2, gl.FLOAT, false, 0, 0);
+        }
+
+        if (arrInd !== undefined && arrInd !== null) {
+            rtn.bufIndex = gl.createBuffer();
+            rtn.indexCount = arrInd.length;
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, rtn.bufIndex);
+            gl.bufferData(gl.ARRAY_BUFFER, new Uint16Array(arrInd), gl.STATIC_DRAW);
+        }
+
+        gl.bindVertexArray(null);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        return rtn;
     }
 }
