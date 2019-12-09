@@ -15,7 +15,7 @@ export class Model {
         if (this.mesh.indexCount) {
             gl.drawElements(this.mesh.drawMode, this.mesh.indexLength, gl.UNSIGNED_SHORT, 0);
         } else {
-            gl.drawArrays(this.mesh.drawMode, 0, this.mesh.vertextCount);
+            gl.drawArrays(this.mesh.drawMode, 0, this.mesh.vertexCount);
         }
 
         gl.bindVertexArray(null);

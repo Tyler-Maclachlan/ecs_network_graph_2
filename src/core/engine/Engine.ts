@@ -23,16 +23,19 @@ export default class Engine {
         this.gl.setSize();
         this.gl.setClearColor('#ffffff');
         this.gl.fClear();
-        console.log(this.gl.glContext);
 
         const gShader = new TestShader(this.gl.glContext, [0.8, 0.8, 0.8, 1, 0, 0, 0, 1, 0, 0, 0, 1])
         const gModel = new Model(Primitives.GridAxis(this.gl.glContext));
+        console.log(gModel);
 
         const rloop = new RenderLoop(() => {
             this.gl.fClear();
             gShader.use(this.gl.glContext);
             gModel.render(this.gl.glContext);
-        })
+            gShader.unbind(this.gl.glContext);
+        });
+
+        rloop.start();
     }
 }
 
@@ -42,13 +45,13 @@ class TestShader extends Shader {
             fragSrc = shaderFromDomSrc("fragment_shader");
         super('test');
         this._program = super.load(gl, vertSrc, fragSrc);
-
+        gl.useProgram(this._program);
 
 
         //Our shader uses custom uniforms 
-        // var uColor = gl.getUniformLocation(this._program, "uColor");
-        // gl.uniform3fv(uColor, aryColor);
+        var uColor = gl.getUniformLocation(this._program, "uColor");
+        gl.uniform3fv(uColor, aryColor);
 
-        // gl.useProgram(null); //Done setting up shader
+        gl.useProgram(null); //Done setting up shader
     }
 }

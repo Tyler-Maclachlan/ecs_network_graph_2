@@ -16,7 +16,7 @@ export class RenderLoop {
     public start() {
         this.isActive = true;
         this._msLastFrame = performance.now();
-        window.requestAnimationFrame(this.run);
+        window.requestAnimationFrame(this.run.bind(this));
     }
 
     public stop() {
@@ -34,6 +34,6 @@ export class RenderLoop {
             this._callback(deltaTime);
         }
 
-        if (this.isActive) window.requestAnimationFrame(this.run);
+        if (this.isActive) window.requestAnimationFrame(this.run.bind(this));
     }
 }

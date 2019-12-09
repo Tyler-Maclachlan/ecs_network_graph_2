@@ -16,14 +16,13 @@ export class Color {
     public static fromHex(hex: string) {
         hex = hex.replace('#', '');
         let rgba: number[] = [];
-
-        if (hex.length === 6 || hex.length === 8) {
-            rgba[0] = parseInt(hex.slice(0, 2)) / 255.0;
-            rgba[1] = parseInt(hex.slice(2, 4)) / 255.0;
-            rgba[2] = parseInt(hex.slice(4, 6)) / 255.0;
+        if (hex.length >= 6) {
+            rgba[0] = parseInt(hex.slice(0, 2), 16) / 255.0;
+            rgba[1] = parseInt(hex.slice(2, 4), 16) / 255.0;
+            rgba[2] = parseInt(hex.slice(4, 6), 16) / 255.0;
 
             if (hex.length === 8) {
-                rgba[3] = parseInt(hex.slice(6, 8)) / 255.0;
+                rgba[3] = parseInt(hex.slice(6, 8), 16) / 255.0;
             } else {
                 rgba[3] = 1.0;
             }

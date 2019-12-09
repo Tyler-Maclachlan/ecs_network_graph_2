@@ -41,6 +41,10 @@ export class Shader {
         gl.useProgram(this._program)
     }
 
+    public unbind(gl: WebGL2RenderingContext) {
+        gl.useProgram(null);
+    }
+
     private loadShader(gl: WebGL2RenderingContext, source: string, type: number): WebGLShader {
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
