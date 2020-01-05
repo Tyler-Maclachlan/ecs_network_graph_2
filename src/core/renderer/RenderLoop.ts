@@ -31,7 +31,7 @@ export class RenderLoop {
         if (msDelta > this._msFpsLimit) {
             this._fps = Math.floor(1 / deltaTime);
             this._msLastFrame = msCurrent;
-            this._callback(deltaTime);
+            this._callback(msCurrent);
         }
 
         if (this.isActive) window.requestAnimationFrame(this.run.bind(this));

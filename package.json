@@ -10,6 +10,7 @@
     "dev": "webpack-dev-server"
   },
   "devDependencies": {
+    "@types/chroma-js": "^1.4.3",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.5.4",
     "tsconfig-paths": "^3.9.0",
@@ -17,5 +18,9 @@
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0"
+  },
+  "dependencies": {
+    "chroma-js": "^2.1.0",
+    "twgl.js": "^4.14.1"
   }
 }

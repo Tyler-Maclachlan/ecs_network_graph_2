@@ -1,4 +1,5 @@
-import { Vec2 } from '../utils'
+// import { Vec2 } from '../utils'
+import { v3 } from 'twgl.js'
 
 export enum Keys {
     LEFT = 37,
@@ -47,7 +48,7 @@ export class InputManager {
     }
 
     public static getMousePosition(): Vec2 {
-        return new Vec2(this._mouseX, this._mouseY);
+        return { x: this._mouseX, y: this._mouseY };
     }
 
     private static onKeyDown(event: KeyboardEvent): boolean {

@@ -1,8 +1,8 @@
 import { BaseComponent } from "./";
-import { Vec3 } from "../utils";
+import { v3 } from "twgl.js";
 
 export class TransformComponent extends BaseComponent {
-    public scale: Vec3;
-    public rotation: Vec3;
-    public position: Vec3;
+    public scale: v3.Vec3;
+    public rotation: v3.Vec3;
+    public position: v3.Vec3;
 }
