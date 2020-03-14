@@ -1,7 +1,21 @@
 import Engine from "./core/engine/Engine";
 
-let network: any;
-
 window.addEventListener('load', () => {
-    network = new Engine();
+    const network = new Engine({
+        container: document.getElementById('canvas')!,
+        data: {
+            nodes: [],
+            edges: []
+        },
+        interaction: {
+            zoom: true
+        },
+        plugins: {
+            layouts: null,
+            renderer: null
+        },
+        styles: {},
+    });
+
+    network.run();
 });

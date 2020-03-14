@@ -1,5 +1,6 @@
 import { Entity, EntityManager } from "./";
 import { BaseComponent } from "../components";
+import { System, Newable } from "../../types";
 
 export class ECS {
     private _entityManager: EntityManager;

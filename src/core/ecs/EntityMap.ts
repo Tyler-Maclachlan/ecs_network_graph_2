@@ -1,4 +1,5 @@
-import { Entity } from "./";
+import { Entity, Option } from "./";
+import { ArrayElement } from "../../types";
 
 export class EntityMap<T> implements IterableIterator<T> {
     private _indices: Array<Entity>;

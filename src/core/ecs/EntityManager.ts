@@ -1,5 +1,6 @@
 import { Entity, EntityAllocator, EntityMap } from './';
 import { BaseComponent } from '../components/';
+import { Newable, ArrayElement } from '../../types';
 
 export class EntityManager {
     private _allocator: EntityAllocator;

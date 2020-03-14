@@ -1,0 +1,61 @@
+Graphing Library
+
+Features:
+  Fast, dynamic, modular
+
+
+
+
+Application:
+  ECS:
+    ☐ Entities @critical 
+    ☐ Components @critical 
+    ☐ Systems @critical
+  Renderer:                         
+    ☐ Pixi.js  @critical 
+  Layouts:
+    Physics:
+      Barnes Hut:@high 
+        ☐ Velocity Integrator
+        ☐ Spring Simulation
+        ☐ Force Simulation
+        ☐ Gravity Simulation
+    Static:
+      ☐ Euler @high 
+      ☐ Cose Bilkent?
+      ☐ Concentric
+      ☐ Grid
+      ☐ Heirarchical
+  Styling:
+    Images:
+      ☐ bordered
+      ☐ circular
+      ☐ jpg, png @high 
+    Shapes:
+      ☐ Circle @high 
+      ☐ Rectangle  @high 
+      ☐ Triangle
+      ☐ Star
+      ☐ DB
+      Lines:
+        ☐ Dotted
+        ☐ Dashed
+        ☐ Solid  @high 
+      ☐ Arrows
+      ☐ Arrow Heads  @high 
+    ☐ Colors @high 
+    ☐ Opacity 
+  Animations:
+  Transitions:
+  Graphing:
+    Search:
+      ☐ BFS  @low 
+      ☐ DFS  @low 
+      ☐ a* @low 
+      ☐ dijkstra
+      ☐ bellmanFord
+    Centrality:
+    Clustering:
+  Compound Nodes:
+  Compound Edges:
+
